@@ -1,10 +1,11 @@
 {
   "name": "@divriots/demo-user-event",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "serve": "cso-cli serve 7WTJJRW7N8OV04zrXWpR --open"
+    "serve": "cso-cli serve 7WTJJRW7N8OV04zrXWpR --open",
+    "release": "npm publish --access public"
   },
   "devDependencies": {
     "@testing-library/dom": "^8.1.0",
