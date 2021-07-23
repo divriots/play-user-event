@@ -1,0 +1,8 @@
+{
+  "name": "@components-studio/divriots.demo-user-event",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "serve": "cso-cli serve 7WTJJRW7N8OV04zrXWpR --open"
+  }
+}
