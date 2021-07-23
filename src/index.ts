@@ -53,7 +53,7 @@ class Cursor extends HTMLElement {
   clickEffect() {
     this.cursor.style.animation = 'none'
     this.cursor.offsetHeight; /* trigger reflow */
-    this.cursor.style.animation = null
+    this.cursor.style.animation = null as any
     this.cursor.className = 'click'
   }
 }
@@ -74,7 +74,7 @@ async function moveCursorTo(element: Element): Promise<void> {
   ensureCursor().setAttribute('style', `top:${Math.floor(top)+5}px;left:${Math.floor(left)+5}px`)
 }
 
-function sleep(ms) {
+function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 

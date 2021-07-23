@@ -1,8 +1,16 @@
 {
-  "name": "@components-studio/divriots.demo-user-event",
-  "version": "0.0.0",
+  "name": "@divriots/demo-user-event",
+  "version": "0.0.1",
   "main": "dist/index.js",
   "scripts": {
+    "build": "tsc",
     "serve": "cso-cli serve 7WTJJRW7N8OV04zrXWpR --open"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^8.1.0",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "@testing-library/user-event": "^13.2.0"
   }
 }
