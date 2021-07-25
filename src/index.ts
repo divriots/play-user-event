@@ -18,12 +18,29 @@ const template = /*html*/ `
   animation-timing-function: linear;
 }
 
+.fade {
+  animation-name: fade;
+  animation-duration: 5000ms;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
 @keyframes grow {
     from {
         transform:scale(1);
     }
     to {
         transform:scale(2);
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: 1
+    }
+    to {
+        opacity: 0
     }
 }
 
@@ -37,24 +54,41 @@ const template = /*html*/ `
   mix-blend-mode: difference;
 }
 </style>
+<div id="fader">
 <div id="cursor"></div>
+</div>
 `
 
 class Cursor extends HTMLElement {
   root: ShadowRoot
   cursor: HTMLDivElement
+  fader: HTMLDivElement
   constructor() {
     super();
     this.root = this.attachShadow({ mode: 'open' })
     this.root.innerHTML = template
     this.cursor = this.root.getElementById('cursor') as HTMLDivElement;
+    this.fader = this.root.getElementById('fader') as HTMLDivElement;
   }
 
   clickEffect() {
     this.cursor.style.animation = 'none'
     this.cursor.offsetHeight; /* trigger reflow */
-    this.cursor.style.animation = null as any
+    this.cursor.style.animation = null as any;
     this.cursor.className = 'click'
+    this.fade();
+  }
+
+  moveTo({top, left}: {top: number, left: number}) {
+    this.setAttribute('style', `top:${top}px;left:${left}px`)
+    this.fade();
+  }
+
+  fade() {
+    this.fader.style.animation = 'none'
+    this.fader.offsetHeight; /* trigger reflow */
+    this.fader.style.animation = null as any;
+    this.fader.className = 'fade'
   }
 }
 
@@ -70,8 +104,8 @@ function ensureCursor(): Cursor {
 }
 
 async function moveCursorTo(element: Element): Promise<void> {
-  const {left, top, height, width} = element.getBoundingClientRect()
-  ensureCursor().setAttribute('style', `top:${Math.floor(top)+5}px;left:${Math.floor(left)+5}px`)
+  const {left, top} = element.getBoundingClientRect()
+  ensureCursor().moveTo({top: Math.floor(top)+5, left: Math.floor(left)+5})
 }
 
 function sleep(ms: number) {
@@ -91,7 +125,7 @@ async function wrapCall(element: Element, token: CancellationToken, cb: VoidFunc
   if (isCancelled()) return;
   ensureCursor().clickEffect();
   if (isCancelled()) return;
-  cb();
+  await cb();
   if (isCancelled()) return;
   await sleep(DELAY2);
 }
