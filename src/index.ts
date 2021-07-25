@@ -78,19 +78,43 @@ function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const demoUserEvent: Partial<typeof userEvent> = {
-  async click(element, init, { token, ...options }: any = {}) {
-    if (token?.isCancellationRequested) return;
-    await moveCursorTo(element)
-    if (token?.isCancellationRequested) return;
-    await sleep(DELAY);
-    if (token?.isCancellationRequested) return;
-    ensureCursor().clickEffect();
-    if (token?.isCancellationRequested) return;
-    userEvent.click(element, init, options);
-    if (token?.isCancellationRequested) return;
-    await sleep(DELAY2);
-  }
+type CancellationToken = {
+  isCancellationRequested: boolean
+}
+
+async function wrapCall(element: Element, token: CancellationToken, cb: VoidFunction) {
+  const isCancelled = () => token?.isCancellationRequested || !document.body.contains(element)
+  if (isCancelled()) return;
+  await moveCursorTo(element)
+  if (isCancelled()) return;
+  await sleep(DELAY);
+  if (isCancelled()) return;
+  ensureCursor().clickEffect();
+  if (isCancelled()) return;
+  cb();
+  if (isCancelled()) return;
+  await sleep(DELAY2);
+}
+
+const demoUserEvent: {
+  click: typeof userEvent['click'],
+  dblClick: typeof userEvent['dblClick'],
+  hover: typeof userEvent['hover'],
+  type: typeof userEvent['type'],
+} = {
+  click(element, init, { token, ...options }: any = {}) {
+    return wrapCall(element, token, () => userEvent.click(element, init, options))
+  },
+  dblClick(element, init, { token }: any = {}) {
+    return wrapCall(element, token, () => userEvent.dblClick(element, init))
+  },
+  hover(element, init, { token }: any = {}) {
+    return wrapCall(element, token, () => userEvent.hover(element, init))
+  },
+  type(element, text, { token, ...options }: any = {}) {
+    if (options.delay === undefined) options.delay = DELAY2;
+    return wrapCall(element, token, () => userEvent.type(element, text, options))
+  },
 }
 
 export default demoUserEvent;
