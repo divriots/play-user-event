@@ -53,4 +53,4 @@ export const story1 = {
 };
 ```
 
-Result:
+![play-demo](https://user-images.githubusercontent.com/604263/126957529-bb23928a-7254-4aaa-b823-180d5e085e6b.gif)
