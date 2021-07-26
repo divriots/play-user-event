@@ -130,7 +130,7 @@ async function wrapCall(element: Element, token: CancellationToken, cb: VoidFunc
   await sleep(DELAY2);
 }
 
-const demoUserEvent: {
+const playUserEvent: {
   click: typeof userEvent['click'],
   dblClick: typeof userEvent['dblClick'],
   hover: typeof userEvent['hover'],
@@ -151,4 +151,4 @@ const demoUserEvent: {
   },
 }
 
-export default demoUserEvent;
+export default playUserEvent;
