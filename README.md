@@ -1,6 +1,8 @@
-# Template ES Module
+# Play user event
 
-This is a template for creating ES Module
+This a a _play_ wrapper for [@testing-library/user-event](https://github.com/testing-library/user-event), for use in DOM context only.
+
+The interactions are played slowly, with a fake cursor displayed & moving around, for use in component demo purposes (storybook `play` function [introduced in csf v3](https://storybook.js.org/blog/component-story-format-3-0/))
 
 ## Table of Contents
 
@@ -12,27 +14,43 @@ This is a template for creating ES Module
 This project uses [npm](https://npmjs.com). Go check them out if you don't have them locally installed.
 
 ```sh
-$ npm install --save template-module-ts
+$ npm install --save @divriots/play-user-event
 ```
 
 ```javascript
-// using ES6 modules
-import { countLetter } from "@wcd/template-module-ts";
-```
-
-or
-
-```html
-<script type="module" src="https://unpkg.com/@wcd/template-module-ts"></script>
+import userEvent from "@divriots/play-user-event";
 ```
 
 ## Usage
 
+[Live demo](https://components.studio/edit/XXX)
+
 ```js
-import { countLetter } from "@wcd/template-module-ts";
+import MyCounter from "../src/index.vue";
+import userEvent from '@divriots/demo-user-event';
+import {screen} from '@testing-library/dom';
 
-const hello_world_count = countLetter("Hello world");
+export default {
+  component: MyCounter,
+  parameters: {
+    layout: "centered",
+  },
+};
 
-// get count of a particular letter
-hello_world_count["w"];
+export const story1 = {
+  play: async () => {
+    const inc = screen.getByText('+')
+    const dec = screen.getByText('-')
+    await userEvent.click(inc)
+    await userEvent.click(dec)
+    await userEvent.click(inc)
+    await userEvent.click(dec)
+    await userEvent.click(inc)
+    await userEvent.click(dec)
+    await userEvent.click(inc)
+    await userEvent.click(dec)
+  }
+};
 ```
+
+Result:

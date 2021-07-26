@@ -1,6 +1,6 @@
 {
-  "name": "@components-studio/divriots.demo-user-event",
-  "version": "1.0.1",
+  "name": "@divriots/play-user-event",
+  "version": "0.0.1",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
