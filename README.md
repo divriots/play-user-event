@@ -23,7 +23,7 @@ import userEvent from "@divriots/play-user-event";
 
 ## Usage
 
-[Live demo](https://components.studio/edit/XXX)
+[Live demo](https://components.studio/edit/ygIx12JTnqYNYBLXJ7AU/src/index.stories.js)
 
 ```js
 import MyCounter from "../src/index.vue";
