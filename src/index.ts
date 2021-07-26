@@ -1,4 +1,6 @@
 import userEvent from '@testing-library/user-event';
+import { clickOptions } from '@testing-library/user-event/dist/click';
+import { typeOptions } from '@testing-library/user-event/dist/type/typeImplementation';
 
 const DELAY = 500;
 const DELAY2 = 100;
@@ -112,11 +114,13 @@ function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-type CancellationToken = {
+export type CancellationToken = {
   isCancellationRequested: boolean
 }
 
-async function wrapCall(element: Element, token: CancellationToken, cb: VoidFunction) {
+type WithCancellationToken<T> = T & {token?: CancellationToken}
+
+async function wrapCall(element: Element, token: CancellationToken | undefined, cb: VoidFunction) {
   const isCancelled = () => token?.isCancellationRequested || !document.body.contains(element)
   if (isCancelled()) return;
   await moveCursorTo(element)
@@ -130,23 +134,26 @@ async function wrapCall(element: Element, token: CancellationToken, cb: VoidFunc
   await sleep(DELAY2);
 }
 
-const playUserEvent: {
-  click: typeof userEvent['click'],
-  dblClick: typeof userEvent['dblClick'],
-  hover: typeof userEvent['hover'],
-  type: typeof userEvent['type'],
-} = {
-  click(element, init, { token, ...options }: any = {}) {
+export type PlayUserEvent = {
+  click(element: Element, init: MouseEventInit, { token, ...options }: WithCancellationToken<clickOptions>): Promise<void>
+  dblClick(element: Element, init: MouseEventInit, { token }: WithCancellationToken<{}>): Promise<void>
+  hover(element: Element, init: MouseEventInit, { token }: WithCancellationToken<{}>): Promise<void>
+  type(element: Element, text: string, { token, ...options }: WithCancellationToken<typeOptions>): Promise<void>
+}
+
+const playUserEvent: PlayUserEvent = {
+  click(element, init, { token, ...options } = {}) {
     return wrapCall(element, token, () => userEvent.click(element, init, options))
   },
-  dblClick(element, init, { token }: any = {}) {
+  dblClick(element, init, { token } = {}) {
     return wrapCall(element, token, () => userEvent.dblClick(element, init))
   },
-  hover(element, init, { token }: any = {}) {
+  hover(element, init, { token } = {}) {
     return wrapCall(element, token, () => userEvent.hover(element, init))
   },
-  type(element, text, { token, ...options }: any = {}) {
+  type(element, text: string, { token, ...options } = {}) {
     if (options.delay === undefined) options.delay = DELAY2;
+    // @ts-ignore
     return wrapCall(element, token, () => userEvent.type(element, text, options))
   },
 }
