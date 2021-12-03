@@ -1,4 +1,4 @@
-[![components.studio](https://img.shields.io/badge/Open%20in-Components.Studio%20editor-%23f8c307)](https://components.studio/edit/ygIx12JTnqYNYBLXJ7AU/src/index.stories.js?p=stories)
+[![components.studio](https://img.shields.io/badge/Open%20in-Components.Studio%20editor-%23319795)](https://components.studio/edit/ygIx12JTnqYNYBLXJ7AU/src/index.stories.js?p=stories)
 
 [![Github Repo](https://img.shields.io/github/last-commit/divriots/play-user-event)](https://github.com/divriots/play-user-event)
 [![NPM Package](https://img.shields.io/npm/v/@divriots/play-user-event)](https://www.npmjs.com/package/@divriots/play-user-event)
