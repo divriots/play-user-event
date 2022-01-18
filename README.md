@@ -32,7 +32,7 @@ import userEvent from "@divriots/play-user-event";
 
 ```js
 import MyCounter from "../src/index.vue";
-import userEvent from '@divriots/demo-user-event';
+import userEvent from '@divriots/play-user-event';
 import {screen} from '@testing-library/dom';
 
 export default {
