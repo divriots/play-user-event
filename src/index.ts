@@ -118,10 +118,15 @@ export type CancellationToken = {
   isCancellationRequested: boolean
 }
 
-type WithCancellationToken<T> = T & {token?: CancellationToken}
+type WithCancellationToken<T> = T & {
+  // introduced by divriots (deprecated)
+  token?: CancellationToken;
+  // later introduced by storybook
+  abortSignal?: AbortSignal
+}
 
-async function wrapCall(element: Element, token: CancellationToken | undefined, cb: VoidFunction) {
-  const isCancelled = () => token?.isCancellationRequested || !document.body.contains(element)
+async function wrapCall(element: Element, token: CancellationToken | undefined, abortSignal: AbortSignal | undefined, cb: VoidFunction) {
+  const isCancelled = () => token?.isCancellationRequested || abortSignal?.aborted || !document.body.contains(element)
   if (isCancelled()) return;
   await moveCursorTo(element)
   if (isCancelled()) return;
@@ -135,26 +140,27 @@ async function wrapCall(element: Element, token: CancellationToken | undefined, 
 }
 
 export type PlayUserEvent = {
-  click(element: Element, init: MouseEventInit, { token, ...options }: WithCancellationToken<clickOptions>): Promise<void>
-  dblClick(element: Element, init: MouseEventInit, { token }: WithCancellationToken<{}>): Promise<void>
-  hover(element: Element, init: MouseEventInit, { token }: WithCancellationToken<{}>): Promise<void>
-  type(element: Element, text: string, { token, ...options }: WithCancellationToken<typeOptions>): Promise<void>
+  click(element: Element, init?: MouseEventInit, options?: WithCancellationToken<clickOptions>): Promise<void>
+  dblClick(element: Element, init?: MouseEventInit, options?: WithCancellationToken<{}>): Promise<void>
+  hover(element: Element, init?: MouseEventInit, options?: WithCancellationToken<{}>): Promise<void>
+  type(element: Element, text: string, options?: WithCancellationToken<typeOptions>): Promise<void>
 }
 
 const playUserEvent: PlayUserEvent = {
-  click(element, init, { token, ...options } = {}) {
-    return wrapCall(element, token, () => userEvent.click(element, init, options))
+  click(element, init, { token, abortSignal, ...options } = {}) {
+    return wrapCall(element, token, abortSignal, () => userEvent.click(element, init, options))
   },
-  dblClick(element, init, { token } = {}) {
-    return wrapCall(element, token, () => userEvent.dblClick(element, init))
+  dblClick(element, init, { token, abortSignal } = {}) {
+    return wrapCall(element, token, abortSignal, () => userEvent.dblClick(element, init))
   },
-  hover(element, init, { token } = {}) {
-    return wrapCall(element, token, () => userEvent.hover(element, init))
+  hover(element, init, { token, abortSignal } = {}) {
+    return wrapCall(element, token, abortSignal, () => userEvent.hover(element, init))
   },
-  type(element, text: string, { token, ...options } = {}) {
-    if (options.delay === undefined) options.delay = DELAY2;
-    // @ts-ignore
-    return wrapCall(element, token, () => userEvent.type(element, text, options))
+  type(element, text: string, { token, abortSignal, ...options } = {}) {
+    return wrapCall(element, token, abortSignal, () => userEvent.type(element, text, {
+      delay: DELAY2,
+      ...options
+    }))
   },
 }
 
